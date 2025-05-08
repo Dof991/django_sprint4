@@ -1,10 +1,10 @@
-# Представления приложения pages
+# URL-шаблоны приложения pages
 
-from django.views.generic import TemplateView
+from django.urls import path
+from . import views
 
+app_name = 'pages'
 
-class FlatPageView(TemplateView):
-    """Обработка статических страниц с помощью CBV"""
-
-    def get_template_names(self):
-        return [f'pages/{self.kwargs["path"]}.html']
+urlpatterns = [
+    path('<path:path>/', views.FlatPageView.as_view(), name='flatpage'),
+]
