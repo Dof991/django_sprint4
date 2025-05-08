@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import Post, Comment
 
+
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
@@ -12,14 +13,19 @@ class PostForm(forms.ModelForm):
             'pub_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
-class CommentForm forms.ModelForm):
+
+class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['text']
 
+
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label='Пароль')
-    password_confirm = forms.CharField(widget=forms.PasswordInput, label='Подтверждение пароля')
+    password_confirm = forms.CharField(
+        widget=forms.PasswordInput,
+        label='Подтверждение пароля'
+    )
 
     class Meta:
         model = User

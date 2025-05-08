@@ -1,12 +1,11 @@
 # Настройки проекта Django
 
-import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Секретный ключ для локальной разработки
-SECRET_KEY = 'django-insecure-@your-secret-key-here-1234567890'
+SECRET_KEY = "django-insecure-s7sy^z+nah_!3rl$*ne231_9(5a)k4z-))+=+g51@bpy7^&*ii"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,7 +56,12 @@ DATABASES = {
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {
+        'NAME': (
+            'django.contrib.auth.password_validation'
+            '.UserAttributeSimilarityValidator'
+        )
+    },
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
