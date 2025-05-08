@@ -31,6 +31,10 @@ class Post(models.Model):
     title = models.CharField(max_length=200, verbose_name='Заголовок')
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(verbose_name='Дата публикации')
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Создан'
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -45,7 +49,6 @@ class Post(models.Model):
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
-        null=True,  # Разрешить NULL для избежания конфликта
         verbose_name='Категория'
     )
     is_published = models.BooleanField(
