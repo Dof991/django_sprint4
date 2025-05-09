@@ -6,6 +6,7 @@ from django.urls import reverse_lazy, reverse
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.db.models import Count
+from django.http import Http404
 
 from .models import Post, Category, Comment, User
 from .forms import RegistrationForm, ProfileEditForm, CommentForm, PostForm
@@ -31,17 +32,17 @@ def post_detail(request, post_id):
     )
 
     if not post.is_published and post.author != request.user:
-        return redirect('blog:index')
-
+        raise Http404("Пост не найден")
     if post.pub_date > timezone.now() and post.author != request.user:
-        return redirect('blog:index')
+        raise Http404("Пост ещё не опубликован")
 
     context = {
         'post': post,
-        'form': CommentForm(),  # Переименовано из comment_form в form
-        'comments': post.comments.all().order_by('created_at')
+        'form': CommentForm() if request.user.is_authenticated else None,
+        'comment_form': CommentForm() if request.user.is_authenticated else None,
+        'comments': post.comments.select_related('author').order_by('created_at')
     }
-    return render(request, 'blog/post_detail.html', context)
+    return render(request, 'blog/detail.html', context)
 
 
 def category_posts(request, category_slug):
@@ -82,7 +83,8 @@ def profile(request, username):
     return render(request, 'blog/profile.html', {
         'profile': profile,
         'page_obj': paginator.get_page(request.GET.get('page')),
-        'user': request.user
+        'user': request.user,
+        'username': profile.username
     })
 
 
@@ -114,6 +116,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        form.instance.pub_date = timezone.now()
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -138,7 +141,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    template_name = 'blog/post_detail.html'
+    template_name = 'blog/detail.html'
     context_object_name = 'post'
 
     def test_func(self):
