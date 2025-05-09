@@ -35,6 +35,7 @@ UrlRepr = NamedTuple("UrlRepr", [("url", str), ("repr", str)])
 TitledUrlRepr = TypeVar("TitledUrlRepr", bound=Tuple[UrlRepr, str])
 
 
+
 @pytest.fixture(autouse=True)
 def enable_debug_false():
     with override_settings(DEBUG=False):
