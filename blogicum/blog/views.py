@@ -39,14 +39,10 @@ def post_detail(request, post_id):
 
     context = {
         'post': post,
-        'form': (CommentForm()
-                 if request.user.is_authenticated
-                 else None),
         'comment_form': (CommentForm()
                          if request.user.is_authenticated
                          else None),
-        'comments': (post.comments.select_related('author')
-                     .order_by('created_at'))
+        'comments': post.comments.select_related('author').order_by('created_at')
     }
     return render(request, 'blog/detail.html', context)
 
@@ -88,9 +84,7 @@ def profile(request, username):
     paginator = Paginator(post_list.order_by('-pub_date'), 10)
     return render(request, 'blog/profile.html', {
         'profile': profile,
-        'page_obj': paginator.get_page(request.GET.get('page')),
-        'user': request.user,
-        'username': profile.username
+        'page_obj': paginator.get_page(request.GET.get('page'))
     })
 
 
@@ -134,6 +128,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
+    login_url = reverse_lazy('blog:login')
     form_class = PostForm
     template_name = 'blog/create.html'
 
