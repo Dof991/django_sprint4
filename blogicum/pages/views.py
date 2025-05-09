@@ -20,7 +20,7 @@ class FlatPageView(DetailView):
     model = Page
     template_name = 'pages/about.html'
     context_object_name = 'page'
-    
+
     def get_object(self, queryset=None):
         path = self.kwargs['path']
         return get_object_or_404(Page, url=path, is_active=True)
