@@ -129,6 +129,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
             kwargs={'username': self.request.user.username}
         )
 
+
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostForm
