@@ -42,7 +42,8 @@ def post_detail(request, post_id):
         'comment_form': (CommentForm()
                          if request.user.is_authenticated
                          else None),
-        'comments': post.comments.select_related('author').order_by('created_at')
+        'comments': (post.comments.select_related('author')
+                     .order_by('created_at'))
     }
     return render(request, 'blog/detail.html', context)
 
