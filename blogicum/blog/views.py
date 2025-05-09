@@ -1,15 +1,15 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import CreateView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.urls import reverse_lazy, reverse
 from django.core.paginator import Paginator
-from django.utils import timezone
 from django.db.models import Count
 from django.http import Http404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse, reverse_lazy
+from django.utils import timezone
+from django.views.generic import CreateView, UpdateView, DeleteView
 
-from .models import Post, Category, Comment, User
-from .forms import RegistrationForm, ProfileEditForm, CommentForm, PostForm
+from .forms import CommentForm, PostForm, ProfileEditForm, RegistrationForm
+from .models import Category, Comment, Post, User
 
 
 def index(request):
@@ -26,8 +26,9 @@ def index(request):
 
 def post_detail(request, post_id):
     post = get_object_or_404(
-        Post.objects.select_related('author', 'category', 'location')
-        .annotate(comment_count=Count('comments')),
+        Post.objects.select_related('author', 'category', 'location').annotate(
+            comment_count=Count('comments')
+        ),
         pk=post_id
     )
 
@@ -38,9 +39,14 @@ def post_detail(request, post_id):
 
     context = {
         'post': post,
-        'form': CommentForm() if request.user.is_authenticated else None,
-        'comment_form': CommentForm() if request.user.is_authenticated else None,
-        'comments': post.comments.select_related('author').order_by('created_at')
+        'form': (CommentForm()
+                 if request.user.is_authenticated
+                 else None),
+        'comment_form': (CommentForm()
+                         if request.user.is_authenticated
+                         else None),
+        'comments': (post.comments.select_related('author')
+                     .order_by('created_at'))
     }
     return render(request, 'blog/detail.html', context)
 
