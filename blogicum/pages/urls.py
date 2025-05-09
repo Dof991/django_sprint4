@@ -8,5 +8,8 @@ app_name = 'pages'
 
 urlpatterns = [
     path('about/', views.FlatPageView.as_view(), name='about'),
+    path('rules/',
+         views.FlatPageView.as_view(template_name='pages/rules.html'),
+         name='rules'),
     path('<path:path>/', views.FlatPageView.as_view(), name='flatpage'),
 ]
