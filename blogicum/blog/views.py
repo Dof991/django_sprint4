@@ -29,7 +29,7 @@ def post_detail(request, post_id):
         .annotate(comment_count=Count('comments')),
         pk=post_id
     )
-    
+
     # Проверка доступа к неопубликованному посту
     if not post.is_published and post.author != request.user:
         return redirect('blog:index')
@@ -37,7 +37,7 @@ def post_detail(request, post_id):
     # Проверка доступа к отложенному посту
     if post.pub_date > timezone.now() and post.author != request.user:
         return redirect('blog:index')
-    
+
     comment_form = CommentForm()
     context = {
         'post': post,
@@ -72,7 +72,7 @@ def profile(request, username):
     post_list = user.posts.all().annotate(
         comment_count=Count('comments')
     )
-    
+
     # Для автора показываем все посты, включая неопубликованные
     if request.user == user:
         post_list = post_list.order_by('-pub_date')
@@ -82,7 +82,7 @@ def profile(request, username):
             is_published=True,
             category__is_published=True
         ).order_by('-pub_date')
-    
+
     paginator = Paginator(post_list, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -103,10 +103,10 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = ProfileEditForm
     template_name = 'blog/user.html'
-    
+
     def get_object(self, queryset=None):
         return self.request.user
-    
+
     def get_success_url(self):
         return reverse(
             'blog:profile',
