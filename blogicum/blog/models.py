@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -34,6 +35,10 @@ class Post(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         related_name='posts'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата создания'
     )
     image = models.ImageField(upload_to='posts_images', blank=True)
     is_published = models.BooleanField(default=True)

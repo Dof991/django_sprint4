@@ -41,7 +41,8 @@ def post_detail(request, post_id):
     comment_form = CommentForm()
     context = {
         'post': post,
-        'comment_form': comment_form,
+        'form': CommentForm(),
+        'comments': post.comments.all().order_by('created_at')
     }
     return render(request, 'blog/post_detail.html', context)
 
@@ -84,10 +85,9 @@ def profile(request, username):
         ).order_by('-pub_date')
 
     paginator = Paginator(post_list, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator.get_page(request.GET.get('page'))
     context = {
-        'profile_user': user,
+        'profile': user,
         'page_obj': page_obj,
     }
     return render(request, 'blog/profile.html', context)
