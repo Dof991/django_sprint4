@@ -30,18 +30,15 @@ def post_detail(request, post_id):
         pk=post_id
     )
 
-    # Проверка доступа к неопубликованному посту
     if not post.is_published and post.author != request.user:
         return redirect('blog:index')
 
-    # Проверка доступа к отложенному посту
     if post.pub_date > timezone.now() and post.author != request.user:
         return redirect('blog:index')
 
-    comment_form = CommentForm()
     context = {
         'post': post,
-        'form': CommentForm(),
+        'form': CommentForm(),  # Переименовано из comment_form в form
         'comments': post.comments.all().order_by('created_at')
     }
     return render(request, 'blog/post_detail.html', context)
