@@ -66,28 +66,24 @@ def category_posts(request, category_slug):
 
 @login_required
 def profile(request, username):
-    user = get_object_or_404(User, username=username)
-    post_list = user.posts.all().annotate(
+    profile = get_object_or_404(User, username=username)  # Используем profile вместо profile_user
+    post_list = profile.posts.select_related('category', 'location').annotate(
         comment_count=Count('comments')
     )
-
-    # Для автора показываем все посты, включая неопубликованные
-    if request.user == user:
-        post_list = post_list.order_by('-pub_date')
-    else:
+    
+    if request.user != profile:
         post_list = post_list.filter(
-            pub_date__lte=timezone.now(),
             is_published=True,
-            category__is_published=True
-        ).order_by('-pub_date')
-
-    paginator = Paginator(post_list, 10)
-    page_obj = paginator.get_page(request.GET.get('page'))
-    context = {
-        'profile': user,
-        'page_obj': page_obj,
-    }
-    return render(request, 'blog/profile.html', context)
+            category__is_published=True,
+            pub_date__lte=timezone.now()
+        )
+    
+    paginator = Paginator(post_list.order_by('-pub_date'), 10)
+    return render(request, 'blog/profile.html', {
+        'profile': profile,  # Используем profile как в шаблоне
+        'page_obj': paginator.get_page(request.GET.get('page')),
+        'user': request.user  # Добавляем user для проверки auth
+    })
 
 
 class RegistrationView(CreateView):
@@ -102,12 +98,11 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
     template_name = 'blog/user.html'
 
     def get_object(self, queryset=None):
-        return self.request.user
+        return self.request.user  # Редактируем только текущего пользователя
 
     def get_success_url(self):
-        return reverse(
-            'blog:profile',
-            kwargs={'username': self.request.user.username}
+        return reverse('blog:profile',
+                       kwargs={'username': self.request.user.username}
         )
 
 
