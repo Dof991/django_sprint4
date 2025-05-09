@@ -39,9 +39,9 @@ def post_detail(request, post_id):
 
     context = {
         'post': post,
-        'comment_form': (CommentForm()
-                         if request.user.is_authenticated
-                         else None),
+        'form': (CommentForm()
+                 if request.user.is_authenticated
+                 else None),
         'comments': (post.comments.select_related('author')
                      .order_by('created_at'))
     }
