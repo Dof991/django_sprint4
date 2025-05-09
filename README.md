@@ -1,4 +1,4 @@
-# django_sprint
+# django_sprint4
 
 ### Features
 - Blogicum is a social network for publishing personal diaries
