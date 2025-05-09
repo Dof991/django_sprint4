@@ -7,5 +7,6 @@ from . import views
 app_name = 'pages'
 
 urlpatterns = [
+    path('about/', views.FlatPageView.as_view(), name='about'),
     path('<path:path>/', views.FlatPageView.as_view(), name='flatpage'),
 ]
