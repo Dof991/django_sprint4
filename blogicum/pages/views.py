@@ -8,7 +8,8 @@ from .models import Page
 
 def csrf_failure(request, reason="", exception=None):
     """Обработчик CSRF-ошибок."""
-    return render(request, 'pages/403csrf.html', {'reason': reason}, status=403)
+    return render(request, 'pages/403csrf.html',
+                  {'reason': reason}, status=403)
 
 
 def page_not_found(request, exception):
